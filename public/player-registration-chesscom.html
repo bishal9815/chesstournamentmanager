@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Registration - Chess Tournament Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .tab-button {
+      padding: 10px 15px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-bottom: none;
+      cursor: pointer;
+      margin-right: 5px;
+      border-radius: 5px 5px 0 0;
+    }
+    
+    .tab-button.active {
+      background-color: #fff;
+      border-bottom: 2px solid #fff;
+      font-weight: bold;
+    }
+    
+    .tab-content {
+      display: none;
+      padding: 20px;
+      border: 1px solid #dee2e6;
+      border-radius: 0 5px 5px 5px;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .registration-tabs {
+      display: flex;
+      margin-bottom: -1px;
+    }
+    
+    /* Dark mode specific styles */
+    [data-theme="dark"] .tab-button {
+      background-color: var(--bg-tertiary);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+    }
+    
+    [data-theme="dark"] .tab-button.active {
+      background-color: var(--bg-secondary);
+      border-bottom: 2px solid var(--bg-secondary);
+      color: var(--primary-color);
+    }
+    
+    [data-theme="dark"] .tab-content {
+      background-color: var(--bg-secondary);
+      border-color: var(--border-color);
+    }
+    
+    [data-theme="dark"] .card {
+      background-color: var(--bg-secondary);
+    }
+    
+    [data-theme="dark"] .card-header.bg-primary {
+      background-color: var(--primary-dark) !important;
+    }
+    
+    [data-theme="dark"] .form-text {
+      color: var(--text-muted);
+    }
+    
+    [data-theme="dark"] .table-striped>tbody>tr:nth-of-type(odd) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    [data-theme="dark"] .table-striped>tbody>tr:nth-of-type(even) {
+      background-color: var(--bg-secondary);
+    }
+    
+    [data-theme="dark"] .table th {
+      background-color: var(--bg-tertiary) !important;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">Chess Tournament Manager</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/tournaments">Tournaments</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/player-registration-chesscom.html">Player Registration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quick-tournament-setup.html">Quick Setup</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tournament-guide">Guide</a>
+          </li>
+          <!-- Login link (shown when not logged in) -->
+          <li class="nav-item" id="login-item">
+            <a class="nav-link" href="/login.html">Login</a>
+          </li>
+          <!-- Profile dropdown (shown when logged in) -->
+          <li class="nav-item dropdown d-none" id="profile-dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <span id="username">Profile</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/profile.html">My Profile</a></li>
+              <li><a class="dropdown-item" href="/my-tournaments.html">My Tournaments</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" id="logout-btn">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="mb-4" id="tournament-title">Player Registration</h1>
+        
+        <div class="tournament-player-management">
+          <h2>Player Management</h2>
+          
+          <div class="row">
+            <div class="col-md-12 mb-4">
+              <div class="card">
+                <div class="card-header bg-primary text-white">
+                  <h3 class="card-title mb-0">Add Players</h3>
+                </div>
+                <div class="card-body">
+                  <div class="player-registration-container">
+                    <div class="registration-tabs">
+                      <button class="tab-button active" id="manual-tab">Manual Entry</button>
+                      <button class="tab-button" id="chesscom-tab">Chess.com Import</button>
+                      <button class="tab-button" id="file-tab">File Upload</button>
+                    </div>
+                    
+                    <div id="alert-container"></div>
+                    
+                    <div id="manual-content" class="tab-content active">
+                      <form id="manual-player-form" class="mt-3">
+                        <div class="row">
+                          <div class="col-md-6 mb-3">
+                            <label for="firstName" class="form-label">First Name *</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" required>
+                          </div>
+                          <div class="col-md-6 mb-3">
+                            <label for="lastName" class="form-label">Last Name *</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" required>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                          </div>
+                          <div class="col-md-6 mb-3">
+                            <label for="chessRating" class="form-label">Chess Rating</label>
+                            <input type="number" class="form-control" id="chessRating" name="chessRating" min="0" max="3000">
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Player</button>
+                      </form>
+                    </div>
+                    
+                    <div id="chesscom-content" class="tab-content">
+                      <form id="chesscom-player-form" class="mt-3">
+                        <div class="mb-3">
+                          <label for="chesscomUsername" class="form-label">Chess.com Username *</label>
+                          <input type="text" class="form-control" id="chesscomUsername" name="chesscomUsername" required>
+                        </div>
+                        <p class="form-text mb-3">
+                          The system will automatically fetch the player's rating and other details from Chess.com.
+                        </p>
+                        <button type="submit" class="btn btn-primary">Import Player</button>
+                      </form>
+                    </div>
+                    
+                    <div id="file-content" class="tab-content">
+                      <form id="file-upload-form" class="mt-3">
+                        <div class="mb-3">
+                          <label for="playerFile" class="form-label">Upload Player List *</label>
+                          <input type="file" class="form-control" id="playerFile" name="playerFile" accept=".xlsx,.xls,.doc,.docx,.csv" required>
+                        </div>
+                        <div class="mb-3">
+                          <p class="form-text">
+                            <strong>Supported formats:</strong> Excel (.xlsx, .xls), Word (.doc, .docx), CSV (.csv)
+                          </p>
+                          <p class="form-text">
+                            <strong>File structure:</strong> Your file should contain columns/fields for player names, emails, and ratings.
+                          </p>
+                          <p class="form-text">
+                            <strong>Example Excel/CSV format:</strong> First Name, Last Name, Email, Rating
+                          </p>
+                          <p class="form-text">
+                            <strong>Example Word format:</strong> One player per line with comma-separated values (First Name, Last Name, Email, Rating)
+                          </p>
+                        </div>
+                        <div class="mb-3">
+                          <a href="/templates/players_template.xlsx" class="btn btn-outline-secondary btn-sm" download>
+                            Download Excel Template
+                          </a>
+                          <a href="/templates/players_template.docx" class="btn btn-outline-secondary btn-sm ms-2" download>
+                            Download Word Template
+                          </a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload Players</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header bg-primary text-white">
+                  <h3 class="card-title mb-0">Registered Players</h3>
+                </div>
+                <div class="card-body">
+                  <div id="players-table-container">
+                    <!-- Players table will be loaded here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+      <p>&copy; 2023 Chess Tournament Manager. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add page animation
+      document.querySelector('.container').classList.add('page-animation');
+      
+      // Get tournament ID from URL or localStorage
+      const urlParams = new URLSearchParams(window.location.search);
+      const tournamentId = urlParams.get('tournamentId') || localStorage.getItem('currentTournamentId');
+      
+      // Continue with initialization
+      fetchTournamentDetails();
+      initializeTabs();
+      setupFormHandlers();
+    });
+    
+    // Show alert message
+    function showAlert(message, type = 'success') {
+      const alertContainer = document.getElementById('alert-container');
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      `;
+      
+      // Auto-dismiss after 5 seconds
+      setTimeout(() => {
+        const alert = alertContainer.querySelector('.alert');
+        if (alert) {
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        }
+      }, 5000);
+    }
+    
+    // Fetch tournament details and registered players
+    async function fetchTournamentDetails() {
+      if (!tournamentId) {
+        showAlert('No tournament selected. Please create or select a tournament first.', 'warning');
+        return;
+      }
+      
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/tournaments/${tournamentId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch tournament details');
+        }
+        
+        const data = await response.json();
+        document.getElementById('tournament-title').textContent = `Player Registration: ${data.data.tournament.name}`;
+        
+        // Render registered players
+        renderPlayersTable(data.data.tournament.participants);
+      } catch (error) {
+        console.error('Error fetching tournament details:', error);
+        showAlert('Error loading tournament details: ' + error.message, 'danger');
+      }
+    }
+    
+    // Initialize tabs
+    function initializeTabs() {
+      // Add event listeners for tabs
+      document.getElementById('manual-tab').addEventListener('click', function() {
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('manual-content').classList.add('active');
+      });
+      
+      document.getElementById('chesscom-tab').addEventListener('click', function() {
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('chesscom-content').classList.add('active');
+      });
+      
+      document.getElementById('file-tab').addEventListener('click', function() {
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('file-content').classList.add('active');
+      });
+    }
+    
+    // Setup form handlers
+    function setupFormHandlers() {
+      // Handle manual player form submission
+      document.getElementById('manual-player-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!tournamentId) {
+          showAlert('No tournament selected. Please go back and select a tournament.', 'warning');
+          return;
+        }
+        
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+        const chessRating = document.getElementById('chessRating').value;
+        
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`/api/tournaments/${tournamentId}/players`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              players: [{
+                firstName,
+                lastName,
+                email,
+                chessRating: chessRating ? parseInt(chessRating) : undefined
+              }]
+            })
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to add player');
+          }
+          
+          showAlert(`Player ${firstName} ${lastName} added successfully!`);
+          
+          // Clear form
+          document.getElementById('manual-player-form').reset();
+          
+          // Refresh player list
+          fetchTournamentDetails();
+        } catch (error) {
+          showAlert(`Error: ${error.message}`, 'danger');
+        }
+      });
+      
+      // Handle Chess.com player form submission
+      document.getElementById('chesscom-player-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!tournamentId) {
+          showAlert('No tournament selected. Please go back and select a tournament.', 'warning');
+          return;
+        }
+        
+        const username = document.getElementById('chesscomUsername').value;
+        
+        try {
+          showAlert(`Fetching data for ${username} from Chess.com...`, 'info');
+          
+          // First fetch player data from Chess.com
+          const response = await fetch(`/api/players/chesscom/${username}`);
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to fetch player data from Chess.com');
+          }
+          
+          const playerData = await response.json();
+          
+          // Then add player to tournament
+          const token = localStorage.getItem('token');
+          const addResponse = await fetch(`/api/tournaments/${tournamentId}/players`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              players: [{
+                firstName: playerData.data.name.split(' ')[0] || username,
+                lastName: playerData.data.name.split(' ').slice(1).join(' ') || '',
+                email: `${username}@chesscom.example.com`,
+                chessRating: playerData.data.rating
+              }]
+            })
+          });
+          
+          if (!addResponse.ok) {
+            const errorData = await addResponse.json();
+            throw new Error(errorData.error || 'Failed to add player');
+          }
+          
+          showAlert(`Player ${username} added successfully!`);
+          
+          // Clear form
+          document.getElementById('chesscom-player-form').reset();
+          
+          // Refresh player list
+          fetchTournamentDetails();
+        } catch (error) {
+          showAlert(`Error: ${error.message}`, 'danger');
+        }
+      });
+      
+      // Handle file upload form submission
+      document.getElementById('file-upload-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!tournamentId) {
+          showAlert('No tournament selected. Please go back and select a tournament.', 'warning');
+          return;
+        }
+        
+        const fileInput = document.getElementById('playerFile');
+        if (!fileInput.files || fileInput.files.length === 0) {
+          showAlert('Please select a file to upload.', 'warning');
+          return;
+        }
+        
+        const formData = new FormData();
+        formData.append('playersFile', fileInput.files[0]);
+        
+        try {
+          showAlert('Uploading and processing file...', 'info');
+          
+          const token = localStorage.getItem('token');
+          const response = await fetch(`/api/tournaments/${tournamentId}/players/upload`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            body: formData
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to upload players');
+          }
+          
+          const data = await response.json();
+          
+          showAlert(`${data.count} players added successfully!`);
+          
+          // Clear form
+          document.getElementById('file-upload-form').reset();
+          
+          // Refresh player list
+          fetchTournamentDetails();
+        } catch (error) {
+          showAlert(`Error: ${error.message}`, 'danger');
+        }
+      });
+      
+      // Add "Done" button at the bottom
+      const doneButton = document.createElement('button');
+      doneButton.className = 'btn btn-primary mt-4';
+      doneButton.textContent = 'Done - Go to Tournament';
+      doneButton.addEventListener('click', function() {
+        if (tournamentId) {
+          window.location.href = `/tournament-details.html?id=${tournamentId}`;
+        } else {
+          window.location.href = '/tournaments';
+        }
+      });
+      
+      document.querySelector('.tournament-player-management').appendChild(doneButton);
+    }
+    
+    // Render players table
+    function renderPlayersTable(participants) {
+      if (!participants || participants.length === 0) {
+        document.getElementById('players-table-container').innerHTML = `
+          <div class="alert alert-info">
+            No players registered yet. Use the forms above to add players.
+          </div>
+        `;
+        return;
+      }
+      
+      let html = `
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      
+      participants.forEach((participant, index) => {
+        const player = participant.player;
+        if (!player) return;
+        
+        let status = '';
+        if (participant.confirmed) {
+          status = '<span class="badge bg-success">Confirmed</span>';
+        } else {
+          status = '<span class="badge bg-warning text-dark">Pending</span>';
+        }
+        
+        if (participant.paid) {
+          status += ' <span class="badge bg-info">Paid</span>';
+        } else {
+          status += ' <span class="badge bg-danger">Unpaid</span>';
+        }
+        
+        html += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${player.firstName} ${player.lastName}</td>
+            <td>${player.email || '-'}</td>
+            <td>${player.chessRating || 'N/A'}</td>
+            <td>${status}</td>
+            <td>
+              <button class="btn btn-sm btn-danger remove-player" data-player-id="${player._id}">Remove</button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+      
+      document.getElementById('players-table-container').innerHTML = html;
+      
+      // Add event listeners to remove buttons
+      document.querySelectorAll('.remove-player').forEach(button => {
+        button.addEventListener('click', async function() {
+          const playerId = this.getAttribute('data-player-id');
+          if (confirm('Are you sure you want to remove this player?')) {
+            await removePlayer(playerId);
+          }
+        });
+      });
+    }
+    
+    // Remove player from tournament
+    async function removePlayer(playerId) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/tournaments/${tournamentId}/players/${playerId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to remove player');
+        }
+        
+        showAlert('Player removed successfully');
+        fetchTournamentDetails(); // Refresh the player list
+      } catch (error) {
+        showAlert('Error removing player: ' + error.message, 'danger');
+      }
+    }
+  </script>
+</body>
+</html> 

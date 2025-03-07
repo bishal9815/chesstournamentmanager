@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tournaments - Chess Tournament Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .info-section {
+      padding: 40px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .info-section:last-child {
+      border-bottom: none;
+    }
+    .section-title {
+      margin-bottom: 30px;
+      color: #1a237e;
+      font-weight: 600;
+    }
+    .action-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .action-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .action-card h3 {
+      color: #1a237e;
+      margin-bottom: 15px;
+    }
+    .tournament-card {
+      transition: all 0.3s ease;
+    }
+    .tournament-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    .sidebar-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #1a237e;
+      font-weight: 600;
+    }
+    .chess-icon {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: #1a237e;
+    }
+    /* Custom styles for the guest navigation */
+    .guest-nav .navbar-nav {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+    .guest-nav .nav-left {
+      margin-right: auto;
+    }
+    .guest-nav .nav-center {
+      display: flex;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .guest-nav .nav-right {
+      margin-left: auto;
+    }
+    .guest-nav .nav-item .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+      padding: 0.5rem 1rem;
+      margin: 0 0.2rem;
+    }
+    .guest-nav .nav-item .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: #fff;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    .guest-nav .nav-item .nav-link:hover::after,
+    .guest-nav .nav-item .nav-link.active::after {
+      width: 80%;
+    }
+    .guest-nav .nav-item .nav-link:hover {
+      color: #fff;
+    }
+    .guest-nav .nav-right .nav-item .nav-link {
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .guest-nav .nav-right .nav-item:first-child .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .guest-nav .nav-right .nav-item:last-child .nav-link {
+      background-color: #3949ab;
+    }
+    .guest-nav .nav-right .nav-item:last-child .nav-link:hover {
+      background-color: #1a237e;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .navbar-brand {
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .navbar-brand:hover {
+      transform: scale(1.05);
+    }
+    @media (max-width: 991px) {
+      .guest-nav .nav-center {
+        position: relative;
+        left: 0;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Regular navigation for logged-in users -->
+  <nav id="user-nav" class="navbar navbar-expand-lg navbar-dark bg-dark d-none">
+    <div class="container">
+      <a class="navbar-brand" href="/">Chess Tournament Manager</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="/tournaments">Tournaments</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/player-registration-chesscom.html">Player Registration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quick-tournament-setup.html">Quick Setup</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tournament-guide">Guide</a>
+          </li>
+          <!-- Login link (shown when not logged in) -->
+          <li class="nav-item" id="login-item">
+            <a class="nav-link" href="/login.html">Login</a>
+          </li>
+          <!-- Profile dropdown (shown when logged in) -->
+          <li class="nav-item dropdown d-none" id="profile-dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <span id="username">Profile</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/profile.html">My Profile</a></li>
+              <li><a class="dropdown-item" href="/my-tournaments.html">My Tournaments</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" id="logout-btn">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Special navigation for non-logged-in users -->
+  <nav id="guest-nav" class="navbar navbar-expand-lg navbar-dark bg-dark guest-nav d-none">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#guestNavbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="guestNavbarNav">
+        <ul class="navbar-nav">
+          <!-- Left side - Brand -->
+          <li class="nav-item nav-left">
+            <a class="navbar-brand" href="/">Chess Tournament Manager</a>
+          </li>
+          
+          <!-- Center - Main navigation -->
+          <div class="nav-center">
+            <li class="nav-item">
+              <a class="nav-link active" href="#tournaments-section">Tournaments</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#blog-section">Blog</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact-section">Contact Us</a>
+            </li>
+          </div>
+          
+          <!-- Right side - Auth buttons -->
+          <div class="nav-right">
+            <li class="nav-item">
+              <a class="nav-link" href="/login.html">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/login.html">New Tournament</a>
+            </li>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Non-logged in user view -->
+  <div id="guest-view" class="d-none">
+    <div class="container-fluid py-5">
+      <div class="row">
+        <!-- Left sidebar - Website title -->
+        <div class="col-md-3 d-flex flex-column align-items-center">
+          <div class="sticky-top pt-3">
+            <div class="text-center mb-4">
+              <div class="chess-icon">♞</div>
+              <h2 class="sidebar-title">Chess Tournament Manager</h2>
+              <p class="text-muted">Organize and manage chess tournaments with ease</p>
+            </div>
+            <div class="d-none d-md-block">
+              <img src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Chess pieces" class="img-fluid rounded mb-4">
+              <p class="text-center fst-italic">"Chess is life in miniature. Chess is a struggle, chess is battles." <br>- Garry Kasparov</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Middle content - Information sections -->
+        <div class="col-md-6">
+          <!-- Tournaments Section -->
+          <section id="tournaments-section" class="info-section">
+            <h2 class="section-title">Tournaments</h2>
+            <p class="lead mb-4">Explore our past and upcoming chess tournaments from around the world.</p>
+            
+            <div id="featured-tournaments">
+              <div class="text-center py-3">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading tournaments...</p>
+              </div>
+            </div>
+          </section>
+          
+          <!-- Blog Section -->
+          <section id="blog-section" class="info-section">
+            <h2 class="section-title">Blog</h2>
+            <p class="lead mb-4">Learn more about our platform and how it can help you organize successful chess tournaments.</p>
+            
+            <div class="card mb-4">
+              <div class="card-body">
+                <h3 class="card-title">Swiss Pairing System Explained</h3>
+                <p class="card-text">Our platform uses the Swiss pairing system, which is designed to pair players with similar scores against each other in each round. This ensures competitive matches throughout the tournament.</p>
+                <p class="card-text">Key benefits include:</p>
+                <ul>
+                  <li>Fair pairings based on current standings</li>
+                  <li>Everyone plays in every round</li>
+                  <li>No early eliminations</li>
+                  <li>Efficient determination of rankings</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="card mb-4">
+              <div class="card-body">
+                <h3 class="card-title">Automated Tournament Management</h3>
+                <p class="card-text">Our platform handles all aspects of tournament management automatically:</p>
+                <ul>
+                  <li>Player registration and verification</li>
+                  <li>Pairing generation for each round</li>
+                  <li>Real-time standings and statistics</li>
+                  <li>Result recording and validation</li>
+                  <li>Tiebreak calculations</li>
+                </ul>
+                <p class="card-text">This allows organizers to focus on providing a great experience for participants rather than managing complex logistics.</p>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-body">
+                <h3 class="card-title">Flexible Tournament Formats</h3>
+                <p class="card-text">Our platform supports various tournament formats to suit your needs:</p>
+                <ul>
+                  <li>Swiss system tournaments (most common)</li>
+                  <li>Round-robin tournaments</li>
+                  <li>Team-based competitions</li>
+                  <li>Custom formats with special rules</li>
+                </ul>
+                <p class="card-text">Each format comes with specialized tools and features to ensure smooth operation.</p>
+              </div>
+            </div>
+          </section>
+          
+          <!-- Contact Us Section -->
+          <section id="contact-section" class="info-section">
+            <h2 class="section-title">Contact Us</h2>
+            <p class="lead mb-4">Have questions or need assistance? We're here to help!</p>
+            
+            <div class="card">
+              <div class="card-body">
+                <h3 class="mb-4">Get in Touch</h3>
+                <form id="contact-form">
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="subject" class="form-label">Subject</label>
+                    <input type="text" class="form-control" id="subject" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" rows="4" required></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+              </div>
+            </div>
+          </section>
+        </div>
+        
+        <!-- Right sidebar - Login/Register options -->
+        <div class="col-md-3">
+          <div class="sticky-top pt-3">
+            <div class="action-card text-center">
+              <h3>Login</h3>
+              <p>Already have an account? Sign in to access your tournaments and manage your profile.</p>
+              <a href="/login.html" class="btn btn-primary btn-lg w-100 mb-2">Login</a>
+            </div>
+            
+            <div class="action-card text-center">
+              <h3>New Tournament</h3>
+              <p>Ready to organize your chess tournament? Create a new tournament in minutes.</p>
+              <a href="/login.html" class="btn btn-success btn-lg w-100 mb-2">Create Tournament</a>
+              <small class="text-muted">You'll need to login or register first</small>
+            </div>
+            
+            <div class="card mt-4">
+              <div class="card-body">
+                <h4 class="card-title">Why Register?</h4>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Create and manage tournaments</li>
+                  <li class="list-group-item">Track player statistics</li>
+                  <li class="list-group-item">Generate pairings automatically</li>
+                  <li class="list-group-item">Record results in real-time</li>
+                  <li class="list-group-item">Access detailed analytics</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logged in user view (original tournaments page) -->
+  <div id="user-view" class="d-none">
+    <div class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Tournaments</h1>
+        <div id="auth-buttons">
+          <a href="/quick-tournament-setup.html" class="btn btn-primary">Create Tournament</a>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="status-filter">Status</label>
+            <select class="form-select" id="status-filter">
+              <option value="all">All</option>
+              <option value="registration">Registration Open</option>
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="form-group">
+            <label for="search">Search</label>
+            <input type="text" class="form-control" id="search" placeholder="Search tournaments...">
+          </div>
+        </div>
+      </div>
+
+      <div id="tournaments-list">
+        <div class="text-center py-5">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2">Loading tournaments...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-dark text-white py-4 mt-auto">
+    <div class="container text-center">
+      <p>&copy; 2023 Chess Tournament Manager. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add page animation class to main content
+      document.getElementById('guest-view').classList.add('page-animation');
+      document.getElementById('user-view').classList.add('page-animation');
+      
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      // Determine which view to show based on login status
+      if (token && user && Object.keys(user).length > 0) {
+        // User is logged in - show the regular tournaments view
+        document.getElementById('user-view').classList.remove('d-none');
+        document.getElementById('user-nav').classList.remove('d-none');
+        
+        // Update UI based on authentication status
+        updateAuthUI(token, user);
+        
+        // Add logout functionality
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Clear local storage
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            
+            // Redirect to the tournaments page (which will show the guest view)
+            window.location.href = '/tournaments';
+          });
+        }
+        
+        // Fetch tournaments
+        fetchTournaments();
+        
+        // Add event listeners for filters
+        document.getElementById('status-filter').addEventListener('change', fetchTournaments);
+        document.getElementById('search').addEventListener('input', debounce(fetchTournaments, 300));
+      } else {
+        // User is not logged in - show the guest view
+        document.getElementById('guest-view').classList.remove('d-none');
+        document.getElementById('guest-nav').classList.remove('d-none');
+        
+        // Fetch featured tournaments for the guest view
+        fetchFeaturedTournaments();
+        
+        // Set up contact form
+        setupContactForm();
+        
+        // Set up smooth scrolling for navigation links
+        setupSmoothScrolling();
+      }
+    });
+    
+    // Setup smooth scrolling for section links
+    function setupSmoothScrolling() {
+      document.querySelectorAll('#guest-nav .nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (this.getAttribute('href').startsWith('#')) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              window.scrollTo({
+                top: targetElement.offsetTop - 70,
+                behavior: 'smooth'
+              });
+              
+              // Update active link
+              document.querySelectorAll('#guest-nav .nav-link').forEach(navLink => {
+                navLink.classList.remove('active');
+              });
+              this.classList.add('active');
+            }
+          }
+        });
+      });
+    }
+    
+    // Update UI based on authentication status
+    function updateAuthUI(token, user) {
+      const loginItem = document.getElementById('login-item');
+      const profileDropdown = document.getElementById('profile-dropdown');
+      const usernameElement = document.getElementById('username');
+      const authButtons = document.getElementById('auth-buttons');
+      
+      if (token && user) {
+        // User is logged in
+        if (loginItem) loginItem.classList.add('d-none');
+        if (profileDropdown) {
+          profileDropdown.classList.remove('d-none');
+          if (usernameElement && user.username) {
+            usernameElement.textContent = user.username;
+          }
+        }
+        
+        // Update auth buttons
+        if (authButtons) {
+          authButtons.innerHTML = `
+            <a href="/quick-tournament-setup.html" class="btn btn-primary">Create Tournament</a>
+          `;
+        }
+      } else {
+        // User is not logged in
+        if (loginItem) loginItem.classList.remove('d-none');
+        if (profileDropdown) profileDropdown.classList.add('d-none');
+        
+        // Update auth buttons
+        if (authButtons) {
+          authButtons.innerHTML = `
+            <a href="/login.html" class="btn btn-primary">Login to Create Tournament</a>
+          `;
+        }
+      }
+    }
+    
+    // Fetch tournaments from API for logged-in users
+    async function fetchTournaments() {
+      const statusFilter = document.getElementById('status-filter').value;
+      const searchQuery = document.getElementById('search').value;
+      
+      try {
+        let url = '/api/tournaments';
+        const params = new URLSearchParams();
+        
+        if (statusFilter && statusFilter !== 'all') {
+          params.append('status', statusFilter);
+        }
+        
+        if (searchQuery) {
+          params.append('search', searchQuery);
+        }
+        
+        if (params.toString()) {
+          url += '?' + params.toString();
+        }
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch tournaments');
+        }
+        
+        const data = await response.json();
+        renderTournaments(data.data);
+      } catch (error) {
+        console.error('Error fetching tournaments:', error);
+        document.getElementById('tournaments-list').innerHTML = `
+          <div class="alert alert-danger">
+            Failed to load tournaments. Please try again later.
+          </div>
+        `;
+      }
+    }
+    
+    // Fetch featured tournaments for non-logged-in users
+    async function fetchFeaturedTournaments() {
+      try {
+        // Fetch completed tournaments to showcase as examples
+        const response = await fetch('/api/tournaments?status=completed&limit=3');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch tournaments');
+        }
+        
+        const data = await response.json();
+        renderFeaturedTournaments(data.data);
+      } catch (error) {
+        console.error('Error fetching featured tournaments:', error);
+        document.getElementById('featured-tournaments').innerHTML = `
+          <div class="alert alert-info">
+            No featured tournaments available at the moment. Please check back later.
+          </div>
+        `;
+      }
+    }
+    
+    // Render featured tournaments for non-logged-in users
+    function renderFeaturedTournaments(tournaments) {
+      const featuredTournamentsElement = document.getElementById('featured-tournaments');
+      
+      if (!tournaments || tournaments.length === 0) {
+        featuredTournamentsElement.innerHTML = `
+          <div class="alert alert-info">
+            No featured tournaments available at the moment. Please check back later.
+          </div>
+        `;
+        return;
+      }
+      
+      let html = `
+        <div class="row">
+      `;
+      
+      tournaments.forEach(tournament => {
+        const startDate = new Date(tournament.startDate).toLocaleDateString();
+        const endDate = new Date(tournament.endDate).toLocaleDateString();
+        
+        let statusBadge = '';
+        switch (tournament.status) {
+          case 'registration':
+            statusBadge = '<span class="badge bg-success">Registration Open</span>';
+            break;
+          case 'active':
+            statusBadge = '<span class="badge bg-primary">Active</span>';
+            break;
+          case 'completed':
+            statusBadge = '<span class="badge bg-secondary">Completed</span>';
+            break;
+        }
+        
+        html += `
+          <div class="col-md-12 mb-4">
+            <div class="card tournament-card h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h4 class="card-title">${tournament.name}</h4>
+                  ${statusBadge}
+                </div>
+                <p class="card-text">${tournament.description || 'No description provided.'}</p>
+                <div class="row">
+                  <div class="col-md-6">
+                    <p><strong>Location:</strong> ${tournament.location}</p>
+                    <p><strong>Dates:</strong> ${startDate} - ${endDate}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <p><strong>Format:</strong> ${tournament.format}</p>
+                    <p><strong>Participants:</strong> ${tournament.participants ? tournament.participants.length : 0}/${tournament.maxParticipants || 'Unlimited'}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer bg-transparent">
+                <a href="/login.html" class="btn btn-primary">Login to View Details</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      html += `
+        </div>
+        <div class="text-center mt-3">
+          <p>Want to see more tournaments or create your own?</p>
+          <a href="/login.html" class="btn btn-outline-primary">Login or Register</a>
+        </div>
+      `;
+      
+      featuredTournamentsElement.innerHTML = html;
+    }
+    
+    // Render tournaments list for logged-in users
+    function renderTournaments(tournaments) {
+      const tournamentsListElement = document.getElementById('tournaments-list');
+      
+      if (!tournaments || tournaments.length === 0) {
+        tournamentsListElement.innerHTML = `
+          <div class="alert alert-info">
+            No tournaments found. Try adjusting your filters or <a href="/quick-tournament-setup.html">create a new tournament</a>.
+          </div>
+        `;
+        return;
+      }
+      
+      let html = `
+        <div class="row">
+      `;
+      
+      tournaments.forEach(tournament => {
+        const startDate = new Date(tournament.startDate).toLocaleDateString();
+        const endDate = new Date(tournament.endDate).toLocaleDateString();
+        
+        let statusBadge = '';
+        switch (tournament.status) {
+          case 'registration':
+            statusBadge = '<span class="badge bg-success">Registration Open</span>';
+            break;
+          case 'active':
+            statusBadge = '<span class="badge bg-primary">Active</span>';
+            break;
+          case 'completed':
+            statusBadge = '<span class="badge bg-secondary">Completed</span>';
+            break;
+        }
+        
+        html += `
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h5 class="card-title">${tournament.name}</h5>
+                  ${statusBadge}
+                </div>
+                <p class="card-text">${tournament.description || 'No description provided.'}</p>
+                <p><strong>Location:</strong> ${tournament.location}</p>
+                <p><strong>Dates:</strong> ${startDate} - ${endDate}</p>
+                <p><strong>Format:</strong> ${tournament.format}</p>
+                <p><strong>Participants:</strong> ${tournament.participants ? tournament.participants.length : 0}/${tournament.maxParticipants || 'Unlimited'}</p>
+              </div>
+              <div class="card-footer bg-transparent">
+                <a href="/tournament-details.html?id=${tournament._id}" class="btn btn-primary w-100">View Details</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      html += `
+        </div>
+      `;
+      
+      tournamentsListElement.innerHTML = html;
+    }
+    
+    // Setup contact form
+    function setupContactForm() {
+      const contactForm = document.getElementById('contact-form');
+      if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // In a real application, you would send this data to your backend
+          const name = document.getElementById('name').value;
+          const email = document.getElementById('email').value;
+          const subject = document.getElementById('subject').value;
+          const message = document.getElementById('message').value;
+          
+          // For demo purposes, just show an alert
+          alert(`Thank you for your message, ${name}! We'll get back to you soon at ${email}.`);
+          
+          // Clear the form
+          contactForm.reset();
+        });
+      }
+    }
+    
+    // Debounce function for search input
+    function debounce(func, delay) {
+      let timeout;
+      return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+      };
+    }
+  </script>
+</body>
+</html> 

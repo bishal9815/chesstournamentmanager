@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Tournaments - Chess Tournament Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .page-header {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+      padding: 40px 0;
+      color: white;
+      margin-bottom: 30px;
+    }
+    
+    .tournament-card {
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .tournament-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tournament-card .card-header {
+      background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
+      color: white;
+      border: none;
+      padding: 15px 20px;
+    }
+    
+    .tournament-card .card-body {
+      padding: 20px;
+    }
+    
+    .tournament-card .badge {
+      font-size: 0.8rem;
+      padding: 5px 10px;
+    }
+    
+    .tournament-card .card-footer {
+      background-color: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 15px 20px;
+    }
+    
+    .tournament-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    
+    .tournament-stat {
+      text-align: center;
+      padding: 5px 10px;
+      background-color: var(--bg-secondary);
+      border-radius: 5px;
+    }
+    
+    .tournament-stat-value {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    
+    .tournament-stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    
+    .filter-bar {
+      background-color: var(--bg-secondary);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    
+    [data-theme="dark"] .tournament-card {
+      background-color: var(--bg-secondary);
+    }
+    
+    [data-theme="dark"] .tournament-card .card-header {
+      color: white;
+    }
+    
+    [data-theme="dark"] .tournament-card .card-body,
+    [data-theme="dark"] .tournament-card .card-footer {
+      color: var(--text-primary);
+    }
+    
+    [data-theme="dark"] .tournament-stat {
+      background-color: var(--bg-tertiary);
+    }
+    
+    [data-theme="dark"] .tournament-stat-label {
+      color: var(--text-muted);
+    }
+    
+    [data-theme="dark"] .filter-bar {
+      background-color: var(--bg-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">Chess Tournament Manager</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/tournaments">Tournaments</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/player-registration-chesscom.html">Player Registration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quick-tournament-setup.html">Quick Setup</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tournament-guide">Guide</a>
+          </li>
+          <li class="nav-item dropdown" id="profile-dropdown">
+            <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <span id="username">Profile</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/profile.html">My Profile</a></li>
+              <li><a class="dropdown-item active" href="/my-tournaments.html">My Tournaments</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" id="logout-btn">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <h1>My Tournaments</h1>
+      <p class="lead">Manage tournaments you've created or participated in</p>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <div class="filter-bar mb-4">
+      <div class="row align-items-center">
+        <div class="col-md-4">
+          <div class="input-group">
+            <input type="text" class="form-control" id="search-input" placeholder="Search tournaments...">
+            <button class="btn btn-primary" id="search-btn">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <select class="form-select" id="status-filter">
+            <option value="all" selected>All Statuses</option>
+            <option value="registration">Registration Open</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <select class="form-select" id="role-filter">
+            <option value="all" selected>All Roles</option>
+            <option value="organizer">Organizer</option>
+            <option value="participant">Participant</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <h2>My Tournaments</h2>
+      </div>
+      <div class="col-md-6 text-end">
+        <a href="/quick-tournament-setup.html" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> Create New Tournament
+        </a>
+      </div>
+    </div>
+    
+    <div id="tournaments-container">
+      <div class="text-center py-5">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading your tournaments...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+      <p>&copy; 2023 Chess Tournament Manager. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add page animation
+      document.querySelector('.container').classList.add('page-animation');
+      
+      // Check if user is logged in
+      const user = getCurrentUser();
+      if (!user || !user.id) {
+        window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+        return;
+      }
+      
+      // Update username in navbar
+      document.getElementById('username').textContent = user.username;
+      
+      // Fetch user's tournaments
+      fetchUserTournaments(user.id);
+      
+      // Add event listeners for filters
+      document.getElementById('search-btn').addEventListener('click', applyFilters);
+      document.getElementById('search-input').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+          applyFilters();
+        }
+      });
+      document.getElementById('status-filter').addEventListener('change', applyFilters);
+      document.getElementById('role-filter').addEventListener('change', applyFilters);
+    });
+    
+    // Global variable to store all tournaments
+    let allTournaments = [];
+    
+    // Fetch user's tournaments
+    async function fetchUserTournaments(userId) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/users/${userId}/tournaments`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch tournaments');
+        }
+        
+        const data = await response.json();
+        allTournaments = data.data || [];
+        renderTournaments(allTournaments);
+      } catch (error) {
+        console.error('Error fetching tournaments:', error);
+        document.getElementById('tournaments-container').innerHTML = `
+          <div class="alert alert-danger">
+            Failed to load tournaments: ${error.message}
+          </div>
+        `;
+      }
+    }
+    
+    // Apply filters to tournaments
+    function applyFilters() {
+      const searchTerm = document.getElementById('search-input').value.toLowerCase();
+      const statusFilter = document.getElementById('status-filter').value;
+      const roleFilter = document.getElementById('role-filter').value;
+      
+      const filteredTournaments = allTournaments.filter(tournament => {
+        // Apply search filter
+        const matchesSearch = !searchTerm || 
+          tournament.name.toLowerCase().includes(searchTerm) || 
+          tournament.location.toLowerCase().includes(searchTerm) ||
+          tournament.description.toLowerCase().includes(searchTerm);
+        
+        // Apply status filter
+        const matchesStatus = statusFilter === 'all' || tournament.status === statusFilter;
+        
+        // Apply role filter
+        const isOrganizer = tournament.organizer && tournament.organizer._id === getCurrentUser().id;
+        const isParticipant = tournament.participants && tournament.participants.some(p => 
+          p.player && p.player._id === getCurrentUser().id
+        );
+        
+        const matchesRole = roleFilter === 'all' || 
+          (roleFilter === 'organizer' && isOrganizer) || 
+          (roleFilter === 'participant' && isParticipant);
+        
+        return matchesSearch && matchesStatus && matchesRole;
+      });
+      
+      renderTournaments(filteredTournaments);
+    }
+    
+    // Render tournaments
+    function renderTournaments(tournaments) {
+      if (!tournaments || tournaments.length === 0) {
+        document.getElementById('tournaments-container').innerHTML = `
+          <div class="alert alert-info">
+            <h4 class="alert-heading">No tournaments found!</h4>
+            <p>You haven't created or participated in any tournaments yet.</p>
+            <hr>
+            <p class="mb-0">
+              <a href="/quick-tournament-setup.html" class="alert-link">Create your first tournament</a> or 
+              <a href="/tournaments" class="alert-link">browse existing tournaments</a> to participate.
+            </p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Sort tournaments by start date (most recent first)
+      const sortedTournaments = [...tournaments].sort((a, b) => {
+        return new Date(b.startDate) - new Date(a.startDate);
+      });
+      
+      let html = `<div class="row">`;
+      
+      sortedTournaments.forEach(tournament => {
+        const startDate = new Date(tournament.startDate).toLocaleDateString();
+        const endDate = new Date(tournament.endDate).toLocaleDateString();
+        
+        let statusBadge = '';
+        let statusClass = '';
+        switch (tournament.status) {
+          case 'registration':
+            statusBadge = '<span class="badge bg-success">Registration Open</span>';
+            statusClass = 'text-success';
+            break;
+          case 'ongoing':
+            statusBadge = '<span class="badge bg-primary">Ongoing</span>';
+            statusClass = 'text-primary';
+            break;
+          case 'completed':
+            statusBadge = '<span class="badge bg-secondary">Completed</span>';
+            statusClass = 'text-secondary';
+            break;
+        }
+        
+        const isOrganizer = tournament.organizer && tournament.organizer._id === getCurrentUser().id;
+        const roleBadge = isOrganizer ? 
+          '<span class="badge bg-warning text-dark ms-2">Organizer</span>' : 
+          '<span class="badge bg-info text-dark ms-2">Participant</span>';
+        
+        html += `
+          <div class="col-md-6">
+            <div class="card tournament-card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">${tournament.name}</h5>
+                <div>
+                  ${statusBadge}
+                  ${roleBadge}
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="card-text">${tournament.description || 'No description provided.'}</p>
+                <div class="tournament-details">
+                  <p><i class="bi bi-geo-alt"></i> <strong>Location:</strong> ${tournament.location}</p>
+                  <p><i class="bi bi-calendar-event"></i> <strong>Dates:</strong> ${startDate} - ${endDate}</p>
+                  <p><i class="bi bi-diagram-3"></i> <strong>Pairing System:</strong> ${tournament.format}</p>
+                </div>
+                <div class="tournament-stats">
+                  <div class="tournament-stat">
+                    <div class="tournament-stat-value">${tournament.rounds}</div>
+                    <div class="tournament-stat-label">Rounds</div>
+                  </div>
+                  <div class="tournament-stat">
+                    <div class="tournament-stat-value">${tournament.participants ? tournament.participants.length : 0}</div>
+                    <div class="tournament-stat-label">Players</div>
+                  </div>
+                  <div class="tournament-stat">
+                    <div class="tournament-stat-value">${tournament.currentRound || 0}</div>
+                    <div class="tournament-stat-label">Current Round</div>
+                  </div>
+                  <div class="tournament-stat">
+                    <div class="tournament-stat-value">${tournament.timeControl || 'N/A'}</div>
+                    <div class="tournament-stat-label">Time Control</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <a href="/tournament-details.html?id=${tournament._id}" class="btn btn-primary">View Details</a>
+                ${isOrganizer && tournament.status === 'registration' ? `
+                  <a href="/tournament-edit.html?id=${tournament._id}" class="btn btn-outline-primary ms-2">Edit</a>
+                  <a href="/player-registration-chesscom.html?tournamentId=${tournament._id}" class="btn btn-outline-success ms-2">Add Players</a>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      html += `</div>`;
+      
+      document.getElementById('tournaments-container').innerHTML = html;
+    }
+  </script>
+</body>
+</html> 

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Chess Tournament Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .profile-header {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+      padding: 40px 0;
+      color: white;
+      margin-bottom: 30px;
+    }
+    
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      font-size: 3rem;
+    }
+    
+    .profile-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    .profile-card {
+      margin-bottom: 25px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .profile-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    [data-theme="dark"] .profile-header {
+      color: white;
+    }
+    
+    [data-theme="dark"] .profile-avatar {
+      background-color: var(--bg-tertiary);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    [data-theme="dark"] .profile-card {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+    
+    [data-theme="dark"] .list-group-item {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">Chess Tournament Manager</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/tournaments">Tournaments</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/player-registration-chesscom.html">Player Registration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quick-tournament-setup.html">Quick Setup</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tournament-guide">Guide</a>
+          </li>
+          <li class="nav-item dropdown" id="profile-dropdown">
+            <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <span id="username">Profile</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item active" href="/profile.html">My Profile</a></li>
+              <li><a class="dropdown-item" href="/my-tournaments.html">My Tournaments</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" id="logout-btn">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="profile-header">
+    <div class="container text-center">
+      <div class="profile-avatar">
+        <i class="bi bi-person"></i>
+      </div>
+      <h1 id="profile-name">User Profile</h1>
+      <p id="profile-email" class="lead">user@example.com</p>
+      
+      <div class="profile-stats">
+        <div class="stat-item">
+          <div id="tournaments-count" class="stat-value">0</div>
+          <div class="stat-label">Tournaments</div>
+        </div>
+        <div class="stat-item">
+          <div id="matches-count" class="stat-value">0</div>
+          <div class="stat-label">Matches</div>
+        </div>
+        <div class="stat-item">
+          <div id="wins-count" class="stat-value">0</div>
+          <div class="stat-label">Wins</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card profile-card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Account Information</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Username
+                <span id="profile-username" class="badge bg-primary rounded-pill">username</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Member Since
+                <span id="member-since" class="badge bg-secondary rounded-pill">Jan 2023</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Role
+                <span id="user-role" class="badge bg-info rounded-pill">Player</span>
+              </li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button id="edit-profile-btn" class="btn btn-primary w-100">Edit Profile</button>
+          </div>
+        </div>
+        
+        <div class="card profile-card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Chess Information</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Rating
+                <span id="chess-rating" class="badge bg-primary rounded-pill">1500</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Federation
+                <span id="chess-federation" class="badge bg-secondary rounded-pill">FIDE</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Title
+                <span id="chess-title" class="badge bg-info rounded-pill">None</span>
+              </li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button id="update-chess-info-btn" class="btn btn-primary w-100">Update Chess Info</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-8">
+        <div class="card profile-card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Recent Tournaments</h5>
+            <a href="/my-tournaments.html" class="btn btn-sm btn-outline-primary">View All</a>
+          </div>
+          <div class="card-body">
+            <div id="recent-tournaments-container">
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading your tournaments...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card profile-card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Recent Activity</h5>
+          </div>
+          <div class="card-body">
+            <div id="recent-activity-container">
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading your activity...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+      <p>&copy; 2023 Chess Tournament Manager. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add page animation
+      document.querySelector('.container').classList.add('page-animation');
+      
+      // Check if user is logged in
+      const user = getCurrentUser();
+      if (!user || !user.id) {
+        window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+        return;
+      }
+      
+      // Update profile information
+      updateProfileInfo(user);
+      
+      // Fetch user's tournaments and activity
+      fetchUserTournaments(user.id);
+      fetchUserActivity(user.id);
+      
+      // Add event listeners
+      document.getElementById('edit-profile-btn').addEventListener('click', function() {
+        // Show edit profile modal or navigate to edit profile page
+        alert('Edit profile functionality will be implemented soon!');
+      });
+      
+      document.getElementById('update-chess-info-btn').addEventListener('click', function() {
+        // Show update chess info modal or navigate to update chess info page
+        alert('Update chess info functionality will be implemented soon!');
+      });
+    });
+    
+    // Update profile information
+    function updateProfileInfo(user) {
+      document.getElementById('profile-name').textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username;
+      document.getElementById('profile-email').textContent = user.email || 'No email provided';
+      document.getElementById('profile-username').textContent = user.username;
+      
+      // Format date
+      const memberSince = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }) : 'Unknown';
+      
+      document.getElementById('member-since').textContent = memberSince;
+      document.getElementById('user-role').textContent = user.role || 'Player';
+      
+      // Chess info
+      document.getElementById('chess-rating').textContent = user.chessRating || 'Not set';
+      document.getElementById('chess-federation').textContent = user.federation || 'Not set';
+      document.getElementById('chess-title').textContent = user.title || 'None';
+    }
+    
+    // Fetch user's tournaments
+    async function fetchUserTournaments(userId) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/users/${userId}/tournaments`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch tournaments');
+        }
+        
+        const data = await response.json();
+        renderRecentTournaments(data.data);
+        
+        // Update stats
+        if (data.data && Array.isArray(data.data)) {
+          document.getElementById('tournaments-count').textContent = data.data.length;
+        }
+      } catch (error) {
+        console.error('Error fetching tournaments:', error);
+        document.getElementById('recent-tournaments-container').innerHTML = `
+          <div class="alert alert-danger">
+            Failed to load tournaments: ${error.message}
+          </div>
+        `;
+      }
+    }
+    
+    // Render recent tournaments
+    function renderRecentTournaments(tournaments) {
+      if (!tournaments || tournaments.length === 0) {
+        document.getElementById('recent-tournaments-container').innerHTML = `
+          <div class="alert alert-info">
+            You haven't participated in any tournaments yet.
+            <a href="/tournaments" class="alert-link">Browse tournaments</a> or
+            <a href="/quick-tournament-setup.html" class="alert-link">create your own</a>.
+          </div>
+        `;
+        return;
+      }
+      
+      // Sort tournaments by start date (most recent first)
+      const sortedTournaments = [...tournaments].sort((a, b) => {
+        return new Date(b.startDate) - new Date(a.startDate);
+      });
+      
+      // Take only the 3 most recent tournaments
+      const recentTournaments = sortedTournaments.slice(0, 3);
+      
+      let html = `
+        <div class="list-group">
+      `;
+      
+      recentTournaments.forEach(tournament => {
+        const startDate = new Date(tournament.startDate).toLocaleDateString();
+        
+        let statusBadge = '';
+        switch (tournament.status) {
+          case 'registration':
+            statusBadge = '<span class="badge bg-success">Registration Open</span>';
+            break;
+          case 'ongoing':
+            statusBadge = '<span class="badge bg-primary">Ongoing</span>';
+            break;
+          case 'completed':
+            statusBadge = '<span class="badge bg-secondary">Completed</span>';
+            break;
+        }
+        
+        html += `
+          <a href="/tournament-details.html?id=${tournament._id}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">${tournament.name}</h5>
+              ${statusBadge}
+            </div>
+            <p class="mb-1">${tournament.location}</p>
+            <small>Starts: ${startDate} | Format: ${tournament.format} | Rounds: ${tournament.rounds}</small>
+          </a>
+        `;
+      });
+      
+      html += `
+        </div>
+      `;
+      
+      document.getElementById('recent-tournaments-container').innerHTML = html;
+    }
+    
+    // Fetch user's activity
+    async function fetchUserActivity(userId) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/api/users/${userId}/activity`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch activity');
+        }
+        
+        const data = await response.json();
+        renderRecentActivity(data.data);
+        
+        // Update stats
+        if (data.data && data.data.matches) {
+          document.getElementById('matches-count').textContent = data.data.matches.length || 0;
+          
+          // Count wins
+          const wins = data.data.matches.filter(match => {
+            return (match.whitePlayer && match.whitePlayer._id === userId && match.result === 'white') ||
+                   (match.blackPlayer && match.blackPlayer._id === userId && match.result === 'black');
+          }).length;
+          
+          document.getElementById('wins-count').textContent = wins;
+        }
+      } catch (error) {
+        console.error('Error fetching activity:', error);
+        document.getElementById('recent-activity-container').innerHTML = `
+          <div class="alert alert-danger">
+            Failed to load activity: ${error.message}
+          </div>
+        `;
+      }
+    }
+    
+    // Render recent activity
+    function renderRecentActivity(activity) {
+      if (!activity || !activity.matches || activity.matches.length === 0) {
+        document.getElementById('recent-activity-container').innerHTML = `
+          <div class="alert alert-info">
+            No recent activity found. Participate in tournaments to see your activity here.
+          </div>
+        `;
+        return;
+      }
+      
+      // Sort matches by date (most recent first)
+      const sortedMatches = [...activity.matches].sort((a, b) => {
+        return new Date(b.date) - new Date(a.date);
+      });
+      
+      // Take only the 5 most recent matches
+      const recentMatches = sortedMatches.slice(0, 5);
+      
+      let html = `
+        <div class="list-group">
+      `;
+      
+      recentMatches.forEach(match => {
+        const matchDate = match.date ? new Date(match.date).toLocaleDateString() : 'Unknown date';
+        
+        let result = 'Not played';
+        let resultClass = '';
+        
+        if (match.result) {
+          switch (match.result) {
+            case 'white':
+              result = match.whitePlayer._id === getCurrentUser().id ? 'Won (White)' : 'Lost (Black)';
+              resultClass = match.whitePlayer._id === getCurrentUser().id ? 'text-success' : 'text-danger';
+              break;
+            case 'black':
+              result = match.blackPlayer._id === getCurrentUser().id ? 'Won (Black)' : 'Lost (White)';
+              resultClass = match.blackPlayer._id === getCurrentUser().id ? 'text-success' : 'text-danger';
+              break;
+            case 'draw':
+              result = 'Draw';
+              resultClass = 'text-warning';
+              break;
+          }
+        }
+        
+        html += `
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">
+                ${match.whitePlayer ? match.whitePlayer.firstName + ' ' + match.whitePlayer.lastName : 'BYE'} 
+                vs 
+                ${match.blackPlayer ? match.blackPlayer.firstName + ' ' + match.blackPlayer.lastName : 'BYE'}
+              </h5>
+              <span class="${resultClass}">${result}</span>
+            </div>
+            <p class="mb-1">Tournament: ${match.tournament ? match.tournament.name : 'Unknown'}</p>
+            <small>Round: ${match.round} | Board: ${match.board} | Date: ${matchDate}</small>
+          </div>
+        `;
+      });
+      
+      html += `
+        </div>
+      `;
+      
+      document.getElementById('recent-activity-container').innerHTML = html;
+    }
+  </script>
+</body>
+</html> 

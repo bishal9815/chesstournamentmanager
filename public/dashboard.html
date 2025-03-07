@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Chess Tournament Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Basic styles */
+    .hero {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+      padding: 80px 0;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon fill="rgba(255,255,255,0.05)" points="0,100 100,0 100,100"/></svg>');
+      background-size: cover;
+    }
+    
+    .hero h1, .hero p, .hero .btn {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero h1 {
+      animation: slideInLeft 1s ease-out;
+    }
+    
+    .hero p {
+      animation: slideInRight 1s ease-out;
+    }
+    
+    .hero .btn {
+      animation: fadeIn 1.2s ease-out;
+    }
+    
+    .card {
+      background-color: var(--card-bg);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 20px;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-title {
+      color: var(--primary-color);
+    }
+    
+    .card-text {
+      color: var(--text-secondary);
+    }
+    
+    .dashboard-container {
+      background-color: var(--bg-primary);
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    footer {
+      margin-top: 50px;
+    }
+    
+    /* Dark mode specific adjustments */
+    [data-theme="dark"] .dropdown-menu {
+      background-color: var(--bg-secondary);
+      border-color: var(--border-color);
+    }
+    
+    [data-theme="dark"] .dropdown-item {
+      color: var(--text-primary);
+    }
+    
+    [data-theme="dark"] .dropdown-item:hover {
+      background-color: var(--bg-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">Chess Tournament Manager</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/tournaments">Tournaments</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/player-registration-chesscom.html">Player Registration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quick-tournament-setup.html">Quick Setup</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tournament-guide">Guide</a>
+          </li>
+          <li class="nav-item dropdown" id="profile-dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <span id="username">Profile</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/profile.html">My Profile</a></li>
+              <li><a class="dropdown-item" href="/my-tournaments.html">My Tournaments</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" id="logout-btn">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="hero text-center py-5">
+    <div class="container">
+      <h1 class="display-4">Welcome, <span id="user-greeting">Chess Player</span>!</h1>
+      <p class="lead">Streamline your chess tournaments with automated player pairing and results tracking</p>
+      <div class="mt-4">
+        <a href="/quick-tournament-setup.html" class="btn btn-primary btn-lg">Create Tournament</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-5 dashboard-container">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h3 class="card-title">Create Tournaments</h3>
+            <p class="card-text">Quickly set up tournaments with customizable settings and player management.</p>
+            <a href="/quick-tournament-setup.html" class="btn btn-primary">Get Started</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h3 class="card-title">Automated Pairing</h3>
+            <p class="card-text">Generate fair pairings using Swiss system or other pairing methods.</p>
+            <a href="/tournaments" class="btn btn-primary">Learn More</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h3 class="card-title">Results Tracking</h3>
+            <p class="card-text">Record match results and view real-time standings and statistics.</p>
+            <a href="/tournaments" class="btn btn-primary">View Tournaments</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+      <p>&copy; 2025 Chess Tournament Manager. All rights reserved by Bishal Dhungana</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add page animation
+      document.querySelector('.dashboard-container').classList.add('page-animation');
+      
+      // Check if user is logged in - auth.js will handle redirection
+      const user = getCurrentUser();
+      
+      // Update UI with user information
+      const usernameElement = document.getElementById('username');
+      const userGreetingElement = document.getElementById('user-greeting');
+      
+      if (usernameElement && user.username) {
+        usernameElement.textContent = user.username;
+      }
+      
+      if (userGreetingElement) {
+        userGreetingElement.textContent = user.firstName || user.username || 'Chess Player';
+      }
+    });
+  </script>
+</body>
+</html> 
